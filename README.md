@@ -55,5 +55,21 @@ P2SH Address:
 ======================================
 ```
 
+4. Generate sample public and compressed private key pairs
+
+```sh
+$ cargo run -- -k                       
+```
+
+Output
+
+```sh
+================= key pair =================
+Private Key
+3b76757db8d6cef7ebb95c96f2ab67f947d09b76692cefcb3b916aead1631dc6
+Public Key
+02b026bbc7233a3f5a0c107b5f74578712a7db9bf8
+======================================
+```
 # LICENSE
 MIT
