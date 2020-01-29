@@ -31,6 +31,30 @@ fn main() {
                     .long("key_pair")
                     .help("Outputs Random Secp256k1 public and compressed private key"))
                 .get_matches();
+                if app.is_present("key_pair") {
+                    generate_key_pair();
+                    return;
+                }
+            
+    match app.value_of("type").unwrap_or("p2pkh") {
+        "p2pkh" => {
+            let private_key = app.value_of("private_key").expect("invalid private key");
+            p2pkh(&private_key);
+        },
+        "p2sh" => {
+            let spending_pub_key = app.value_of("spending_pub_key").expect("failed to get pubkey");
+            let spending_pub_key = spending_pub_key.split(",").collect::<Vec<&str>>();
+            if spending_pub_key.len() == 1 {
+                p2sh(spending_pub_key[0]);
+            } else if spending_pub_key.len() == 3 {
+                p2sh_multisig(&spending_pub_key);
+            } else {
+                println!("invalid spending pub keys");
+            }
+            
+        },
+        _ => panic!("address type not implemented")
+    }
 }
 
 fn p2pkh(private_key: &str) {
