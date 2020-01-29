@@ -68,3 +68,47 @@ fn title(title: &str) {
 fn end() {
     println!("======================================");
 }
+
+fn p2sh(spending_pub_key: &str) {
+    title("Generating P2SH address");
+    // 0x21 is the bitcoin push data OPCODE 
+    // 0xac is the bitcoin OPCODE for CHECKSIG
+    // 
+    // This is simple Bitcoin script the enables only the spending pubkey to spend
+    // any UTXO sent to the P2SH address
+    // generate redeem script
+    // 
+    let redeem_script = format!("21{}ac", spending_pub_key);
+    println!("Redeem Script: \n{}",  redeem_script);
+    println!("P2SH Address: \n{}", generate_p2sh_address(&redeem_script));
+    end();
+}
+
+fn p2sh_multisig(spending_pub_keys: &[&str]) {
+    // Redeem Script for 2-3 multisig address
+    //
+    // 52 \ 21 \ {pub_key} \ 21 \ {pub_key} \ 21 \ {pub_key} \ 53 \ ae
+    // 0x52 is Bitcoin opcode for constant 2
+    // 0x21 is Bitcoin push data opcode pushes the pub keys on to the stack
+    // 0x53 is Bitcoin opcode for constant 3
+    // 0xae is the Bitcoin OPCODE for OP_CHECKMULTISIG
+    // 
+    // This is a redeems 
+    let redeem_script = format!("5221{}21{}21{}53ae", spending_pub_keys[0], spending_pub_keys[1], spending_pub_keys[2]);
+    println!("Redeem Script: \n{}",  redeem_script);
+    println!("P2SH Address: \n{}", generate_p2sh_address(&redeem_script));
+    end();
+
+}
+
+fn generate_p2sh_address(redeem_script: &str) -> String {
+    let mut sha2 = Sha256::new();
+    sha2.input(&hex::decode(&redeem_script).expect("fialed to deserialize redeem script"));
+    let result = sha2.result();
+
+    let mut ripemd_hash = Ripemd160::new();
+    ripemd_hash.input(&result);
+    let ripemd_result = ripemd_hash.result().as_slice().to_owned();
+
+    ripemd_result.to_base58check(5)
+}
