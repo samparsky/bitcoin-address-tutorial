@@ -1,8 +1,8 @@
-use clap::{Arg, App};
-use secp256k1::{Secp256k1, SecretKey, PublicKey};
-use sha2::{Sha256};
-use ripemd160::{Ripemd160, Digest};
 use base58check::ToBase58Check;
+use clap::{App, Arg};
+use ripemd160::{Digest, Ripemd160};
+use secp256k1::{PublicKey, Secp256k1, SecretKey};
+use sha2::Sha256;
 
 fn main() {
     let app = App::new("Bitcoin Address Generator")
@@ -31,11 +31,11 @@ fn main() {
                     .long("key_pair")
                     .help("Outputs Random Secp256k1 public and compressed private key"))
                 .get_matches();
-                if app.is_present("key_pair") {
-                    generate_key_pair();
-                    return;
-                }
-            
+    if app.is_present("key_pair") {
+        generate_key_pair();
+        return;
+    }
+
     match app.value_of("type").unwrap_or("p2pkh") {
         "p2pkh" => {
             let private_key = app.value_of("private_key").expect("invalid private key");
@@ -44,9 +44,11 @@ fn main() {
             let address = p2pkh(&private_key);
             println!("P2PKH Address: \n{}", address);
             end();
-        },
+        }
         "p2sh" => {
-            let spending_pub_key = app.value_of("spending_pub_key").expect("failed to get pubkey");
+            let spending_pub_key = app
+                .value_of("spending_pub_key")
+                .expect("failed to get pubkey");
             let spending_pub_key = spending_pub_key.split(",").collect::<Vec<&str>>();
 
             title("Generating P2SH address");
@@ -54,15 +56,14 @@ fn main() {
                 let address = p2sh(spending_pub_key[0]);
                 println!("P2SH Address: \n{}", address);
             } else if spending_pub_key.len() == 3 {
-                let address =  p2sh_multisig(&spending_pub_key);
+                let address = p2sh_multisig(&spending_pub_key);
                 println!("P2SH Address: \n{}", address);
             } else {
                 println!("invalid spending pub keys");
             }
             end();
-            
-        },
-        _ => panic!("address type not implemented")
+        }
+        _ => panic!("address type not implemented"),
     }
 }
 
@@ -86,9 +87,8 @@ fn p2pkh(private_key: &str) -> String {
     ripemd_result.to_base58check(0)
 }
 
-
 fn title(title: &str) {
-    println!("================= {} =================", title);   
+    println!("================= {} =================", title);
 }
 
 fn end() {
@@ -96,15 +96,15 @@ fn end() {
 }
 
 fn p2sh(spending_pub_key: &str) -> String {
-    // 0x21 is the bitcoin push data OPCODE 
+    // 0x21 is the bitcoin push data OPCODE
     // 0xac is the bitcoin OPCODE for CHECKSIG
-    // 
+    //
     // This is simple Bitcoin script the enables only the spending pubkey to spend
     // any UTXO sent to the P2SH address
     // generate redeem script
-    // 
+    //
     let redeem_script = format!("21{}ac", spending_pub_key);
-    println!("Redeem Script: \n{}",  redeem_script);
+    println!("Redeem Script: \n{}", redeem_script);
     generate_p2sh_address(&redeem_script)
 }
 
@@ -116,10 +116,13 @@ fn p2sh_multisig(spending_pub_keys: &[&str]) -> String {
     // 0x21 is Bitcoin push data opcode pushes the pub keys on to the stack
     // 0x53 is Bitcoin opcode for constant 3
     // 0xae is the Bitcoin OPCODE for OP_CHECKMULTISIG
-    // 
-    // This is a redeems 
-    let redeem_script = format!("5221{}21{}21{}53ae", spending_pub_keys[0], spending_pub_keys[1], spending_pub_keys[2]);
-    println!("Redeem Script: \n{}",  redeem_script);
+    //
+    // This is a redeems
+    let redeem_script = format!(
+        "5221{}21{}21{}53ae",
+        spending_pub_keys[0], spending_pub_keys[1], spending_pub_keys[2]
+    );
+    println!("Redeem Script: \n{}", redeem_script);
     generate_p2sh_address(&redeem_script)
 }
 
@@ -169,9 +172,11 @@ mod test {
     fn should_generate_correct_multisig_p2sh_address() {
         assert_eq!(
             "3DD4YP2T75TQtf84KrHzYVLYgNAeaHWqxq",
-            p2sh_multisig(&["020ae29f86f404e4b302cfa17ff15d93149af6a54c80a4172d47e41f55f6a78d73", "03664d528eb80096671ef9011c533ceb5df133238e3690d88f2960c786398b86b1", "029a449ea4a2155ea10002d704604bb3e8606631d35af20889a74b82b2dab572f6"])
+            p2sh_multisig(&[
+                "020ae29f86f404e4b302cfa17ff15d93149af6a54c80a4172d47e41f55f6a78d73",
+                "03664d528eb80096671ef9011c533ceb5df133238e3690d88f2960c786398b86b1",
+                "029a449ea4a2155ea10002d704604bb3e8606631d35af20889a74b82b2dab572f6"
+            ])
         );
     }
-
-
 }
