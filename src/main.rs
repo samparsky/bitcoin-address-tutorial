@@ -7,7 +7,7 @@ use sha2::Sha256;
 fn main() {
     let app = App::new("Bitcoin Address Generator")
                 .version("1.0")
-                .about("Simple Rust tutorial to generate different types of Bitcoin Addresses i.e. P2PKH, P2SH")
+                .about("Simple Rust CLI to generate different types of Bitcoin Addresses i.e. P2PKH, P2SH")
                 .arg(Arg::with_name("private_key")
                     .short("p")
                     .long("private_key")
