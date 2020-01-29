@@ -1,3 +1,30 @@
+use clap::{Arg, App};
+
 fn main() {
-    println!("Hello, world!");
+    let app = App::new("Bitcoin Address Generator")
+                .version("1.0")
+                .about("Simple Rust tutorial to generate different types of Bitcoin Addresses i.e. P2PKH, P2SH")
+                .arg(Arg::with_name("private_key")
+                    .short("p")
+                    .long("private_key")
+                    .help("Sets the private key string")
+                    .required_if("type", "p2pkh")
+                    .takes_value(true))
+                .arg(Arg::with_name("type")
+                    .short("t")
+                    .long("type")
+                    .help("Address type to generate")
+                    .possible_values(&["p2pkh", "p2sh"])
+                    .takes_value(true))
+                .arg(Arg::with_name("spending_pub_key")
+                    .short("s")
+                    .long("spending_pub_key")
+                    .required_if("type", "p2sh")
+                    .help("Public key that redeems P2SH transaction")
+                    .takes_value(true))
+                .arg(Arg::with_name("key_pair")
+                    .short("k")
+                    .long("key_pair")
+                    .help("Outputs Random Secp256k1 public and compressed private key"))
+                .get_matches();
 }
