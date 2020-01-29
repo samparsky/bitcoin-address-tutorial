@@ -2,9 +2,9 @@
 
 Rust CLI application that generates different Bitcoin addresses 
 
-[x] P2PKH, 
-[x] P2SH
-[ ] P2WSH ( WIP )
+- [x] P2PKH
+- [x] P2SH
+- [ ] P2WSH ( WIP )
 
 ## Help
 
