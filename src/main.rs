@@ -112,3 +112,16 @@ fn generate_p2sh_address(redeem_script: &str) -> String {
 
     ripemd_result.to_base58check(5)
 }
+
+fn generate_key_pair() {
+    title("key pair");
+    use secp256k1::rand::rngs::OsRng;
+    let secp = Secp256k1::new();
+    let mut rng = OsRng::new().unwrap();
+    let (secret_key, public_key) = secp.generate_keypair(&mut rng);
+    println!("Private Key");
+    println!("{}", secret_key.to_string());
+    println!("Public Key");
+    println!("{}", public_key.to_string());
+    end();
+}
