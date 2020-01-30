@@ -11,7 +11,7 @@ Rust CLI application that generates different Bitcoin addresses
 1. Generate P2PKH address
 
 ```sh
-$ cargo run -- --type p2sh --private_key a966eb6058f8ec9f47074a2faadd3dab42e2c60ed05bc34d39d6c0e1d32b8bdf
+$ cargo run -- --type p2pkh --private_key a966eb6058f8ec9f47074a2faadd3dab42e2c60ed05bc34d39d6c0e1d32b8bdf
 ```
 Output
 
@@ -25,7 +25,7 @@ P2PKH Address:
 2. Generate simple P2SH address
 
 ```sh
-$ cargo run -- --type p2pkh --spending_pub_key 020ae29f86f404e4b302cfa17ff15d93149af6a54c80a4172d47e41f55f6a78d73
+$ cargo run -- --type p2sh --spending_pub_key 020ae29f86f404e4b302cfa17ff15d93149af6a54c80a4172d47e41f55f6a78d73
 ```
 
 Output
@@ -71,5 +71,6 @@ Public Key
 02b026bbc7233a3f5a0c107b5f74578712a7db9bf8
 ======================================
 ```
+
 # LICENSE
 MIT

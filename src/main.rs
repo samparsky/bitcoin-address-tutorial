@@ -96,12 +96,14 @@ fn end() {
 }
 
 fn p2sh(spending_pub_key: &str) -> String {
+    // Single signature P2SH
+    //
     // 0x21 is the bitcoin push data OPCODE
     // 0xac is the bitcoin OPCODE for CHECKSIG
     //
     // This is simple Bitcoin script the enables only the spending pubkey to spend
     // any UTXO sent to the P2SH address
-    // generate redeem script
+    //
     //
     let redeem_script = format!("21{}ac", spending_pub_key);
     println!("Redeem Script: \n{}", redeem_script);
@@ -117,7 +119,7 @@ fn p2sh_multisig(spending_pub_keys: &[&str]) -> String {
     // 0x53 is Bitcoin opcode for constant 3
     // 0xae is the Bitcoin OPCODE for OP_CHECKMULTISIG
     //
-    // This is a redeems
+    //
     let redeem_script = format!(
         "5221{}21{}21{}53ae",
         spending_pub_keys[0], spending_pub_keys[1], spending_pub_keys[2]
